@@ -1,5 +1,8 @@
 build
 out
+pngs
+gifs
+bouncing-ball.mov
 .cache
 .idea
 .vs
