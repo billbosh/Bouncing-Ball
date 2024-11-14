@@ -1,16 +1,7 @@
-#include <SFML/Graphics/CircleShape.hpp>
-#include <SFML/Graphics/Color.hpp>
-#include <SFML/Graphics/Drawable.hpp>
-#include <SFML/Graphics/RectangleShape.hpp>
-#include <SFML/Graphics/RenderStates.hpp>
-#include <SFML/Graphics/RenderTarget.hpp>
-#include <SFML/Graphics/RenderWindow.hpp>
-#include <SFML/Graphics/Transformable.hpp>
+#include <SFML/Graphics.hpp>
 #include <SFML/System/Clock.hpp>
 #include <SFML/System/Time.hpp>
 #include <SFML/System/Vector2.hpp>
-#include <cstdlib>
-#include <iostream>
 
 class Ball {
     sf::Vector2f m_pos;
@@ -96,8 +87,6 @@ public:
     void onClick(sf::Vector2f newPos) {
         m_pos.x = newPos.x;
         m_pos.y = newPos.y;
-
-        std::cout << "x: " << newPos.x << " y: " << newPos.y << std::endl;
 
         m_vel.x = 10;
         m_vel.y = -1;
