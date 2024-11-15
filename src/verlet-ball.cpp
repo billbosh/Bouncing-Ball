@@ -1,4 +1,3 @@
-#include <malloc/_malloc_type.h>
 #include <SFML/Graphics/CircleShape.hpp>
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
