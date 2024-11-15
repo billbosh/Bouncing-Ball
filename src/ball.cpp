@@ -1,3 +1,5 @@
+/* Original ball class, since updated to verlet integration based class */
+
 #include <SFML/Graphics.hpp>
 #include <SFML/System/Clock.hpp>
 #include <SFML/System/Time.hpp>
@@ -8,27 +10,32 @@ class Ball {
     sf::Vector2f m_vel;
     sf::CircleShape m_s;
     float m_radius;
-    float m_gravity = 0.2f;
+    float m_gravity;
     sf::Clock m_clock;
     sf::Vector2f m_bounds;
     float m_collisionDamping;
     float m_dragCoefficient;
-    float m_drag;
 
 public:
-    Ball (float pos_x, float pos_y, float vel_x, float vel_y, float radius, sf::Vector2f bounds, float collisionDamping = 0.8f, float dragCoefficient = 0.98f) {
-        m_pos.x = pos_x;
-        m_pos.y = pos_y;
+    Ball (sf::Vector2f pos, 
+          sf::Vector2f vel, 
+          float radius, 
+          sf::Vector2f bounds, 
+          float gravity,
+          float collisionDamping, 
+          float dragCoefficient) {
+        m_pos.x = pos.x;
+        m_pos.y = pos.y;
 
-        m_vel.x = vel_x;
-        m_vel.y = vel_y;
+        m_vel.x = vel.x;
+        m_vel.y = vel.y;
+        
+        m_radius = radius;
         
         m_bounds = bounds;
-
-        m_radius = radius;
-
+        m_gravity = gravity;
         m_collisionDamping = collisionDamping;
-        m_drag = dragCoefficient;
+        m_dragCoefficient = dragCoefficient;
 
         m_s.setPosition(m_pos.x, m_pos.y);
         m_s.setFillColor(sf::Color::White);
@@ -45,7 +52,8 @@ public:
 
         m_pos.x += m_vel.x * elapsed.asSeconds();
         m_pos.y += m_vel.y * elapsed.asSeconds();
-
+        
+        // m_vel.x *= m_dragCoefficient;
         m_vel.y += m_gravity * elapsed.asSeconds();
 
         resolveCollisions();
@@ -56,19 +64,19 @@ public:
     void resolveCollisions() {
         if (m_pos.x > m_bounds.x) {
             m_pos.x = m_bounds.x - m_radius;
-            m_vel.x *= -1 * m_collisionDamping;
+            m_vel.x *= -1.f * m_collisionDamping;
         }
         else if (m_pos.x < 0) {
             m_pos.x = m_radius;
-            m_vel.x *= -1 * m_collisionDamping;
+            m_vel.x *= -1.f * m_collisionDamping;
         }
         if (m_pos.y > m_bounds.y) {
             m_pos.y = m_bounds.y - m_radius;
-            m_vel.y *= -1 * m_collisionDamping;
+            m_vel.y *= -1.f * m_collisionDamping;
         }
         else if (m_pos.y < 0) {
             m_pos.y = m_radius;
-            m_vel.y *= -1 * m_collisionDamping;
+            m_vel.y *= -1.f * m_collisionDamping;
         }
     }
 
@@ -89,7 +97,7 @@ public:
         m_pos.y = newPos.y;
 
         m_vel.x = 10;
-        m_vel.y = -1;
+        m_vel.y = 0;
 
         m_clock.restart();
     }

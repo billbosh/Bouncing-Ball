@@ -1,16 +1,31 @@
 #include <SFML/Graphics.hpp>
+#include <SFML/Graphics/Vertex.hpp>
 #include <SFML/System/Vector2.hpp>
 #include <SFML/Window/Mouse.hpp>
-#include "ball.hpp"
+#include <vector>
+#include "ball.cpp"
+#include "verlet-solver.cpp"
+#include "helper-functions.cpp"
 
 int main()
 {
-    sf::Vector2f windowSize(1000.f, 1000.f);
+    sf::Vector2f bounds(1000.f, 1000.f);
     auto window = sf::RenderWindow({1000u, 1000u}, "Bouncing Ball");
-    window.setFramerateLimit(144);
+    window.setFramerateLimit(60);
 
-    Ball ball(10, 10, 10, 0, 10.0f, windowSize, 0.6f);
-
+    /*
+    Ball ball(sf::Vector2f{10.f, 10.f}, 
+              sf::Vector2f{10.f, 0.f}, 
+              10.0f, 
+              bounds,
+              0.2f,
+              0.6f,
+              0.985f);
+    */
+    
+    std::vector<VerletBall> balls;
+    VerletSolver solver(balls); 
+    
     sf::Clock clock;
     sf::Vector2i mouse; 
 
@@ -23,15 +38,25 @@ int main()
                 window.close();
             }
             if (event.type == sf::Event::MouseButtonPressed) {
-                sf::Vector2i mouse = sf::Mouse::getPosition(window);
+                /*
                 ball.onClick(static_cast<sf::Vector2f>(mouse)); 
+                */
+
+                // on click spawn ball at mouse location with random velocity vector
+                sf::Vector2i mouse = sf::Mouse::getPosition(window);
+                sf::Vector2f randomVel{randomFloatInRange(-10.f, 10.f), randomFloatInRange(-5.f, 5.f)};
+                solver.addBall(VerletBall(static_cast<sf::Vector2f>(mouse),
+                                             randomVel,
+                                             sf::Vector2f{0.f, 0.f},
+                                             bounds,
+                                             0.8f,
+                                             30.0f,
+                                             sf::Color::Blue));
             }
         }
-        
-        ball.update();
-
+        solver.update();
         window.clear();
-        ball.render(window);
+        solver.render(window);
         window.display();
     }
 }
