@@ -1,3 +1,4 @@
+#include <SFML/Config.hpp>
 #include <SFML/Graphics.hpp>
 #include <SFML/Graphics/Vertex.hpp>
 #include <SFML/System/Vector2.hpp>
@@ -11,7 +12,7 @@ int main()
 {
     sf::Vector2f bounds(1000.f, 1000.f);
     auto window = sf::RenderWindow({1000u, 1000u}, "Bouncing Ball");
-    window.setFramerateLimit(60);
+    window.setFramerateLimit(144);
 
     /*
     Ball ball(sf::Vector2f{10.f, 10.f}, 
@@ -23,8 +24,9 @@ int main()
               0.985f);
     */
     
+    float ballRadius = 30.f;
     std::vector<VerletBall> balls;
-    VerletSolver solver(balls); 
+    VerletSolver solver(balls, ballRadius); 
     
     sf::Clock clock;
     sf::Vector2i mouse; 
@@ -44,14 +46,14 @@ int main()
 
                 // on click spawn ball at mouse location with random velocity vector
                 sf::Vector2i mouse = sf::Mouse::getPosition(window);
-                sf::Vector2f randomVel{randomFloatInRange(-10.f, 10.f), randomFloatInRange(-5.f, 5.f)};
-                solver.addBall(VerletBall(static_cast<sf::Vector2f>(mouse),
-                                             randomVel,
-                                             sf::Vector2f{0.f, 0.f},
-                                             bounds,
-                                             0.8f,
-                                             30.0f,
-                                             sf::Color::Blue));
+                sf::Vector2f randomVel{randomFloatInRange(-5.f, 5.f), randomFloatInRange(-5.f, 5.f)};
+                solver.addBall(VerletBall(static_cast<sf::Vector2f>(mouse), 
+                                          randomVel, 
+                                          sf::Vector2f{0.f, 0.f}, 
+                                          bounds, 
+                                          0.6f,  
+                                          ballRadius, 
+                                          sf::Color::Blue));
             }
         }
         solver.update();

@@ -48,53 +48,59 @@ public:
     }
 
     void update() {
-        float elapsed = clock.getElapsedTime().asSeconds();
+        for (size_t substep = 0; substep < 8; ++substep) {
+            float elapsed = clock.getElapsedTime().asSeconds() / 8;
 
-        sf::Vector2f velocity = posCurrent - posPrevious;
-        velocity = resolveCollisions(velocity);
+            sf::Vector2f velocity = posCurrent - posPrevious;
+            velocity = resolveBoundsCollisions(velocity);
 
-        posPrevious = posCurrent;
+            posPrevious = posCurrent;
 
-        float elapsedSquared = std::pow(elapsed, 2);
-        posCurrent = posCurrent + velocity + acceleration * elapsedSquared;
+            float elapsedSquared = std::pow(elapsed, 2);
+            posCurrent = posCurrent + velocity + acceleration * elapsedSquared;
 
-        acceleration = (sf::Vector2f{0.f, 0.f});
+            acceleration = (sf::Vector2f{0.f, 0.f});
 
-        s.setPosition(posCurrent);
+            s.setPosition(posCurrent);
+        }
     }
 
     void accelerate(sf::Vector2f acc) {
         acceleration += acc;
+    }
+    
+    sf::Vector2f getPosition() {
+        return posCurrent;
     }
 
     void setPosition(sf::Vector2f pos) {
         posCurrent = pos;
     }
 
-    sf::Vector2f resolveCollisions(sf::Vector2f velocity) {
+    sf::Vector2f resolveBoundsCollisions(sf::Vector2f velocity) {
         // if ball hits left side
         if (posCurrent.x < radius) {
             posCurrent = sf::Vector2f{radius, posCurrent.y};
             posPrevious = posCurrent;   
-            return sf::Vector2f{velocity.x * -1.f, velocity.y};
+            return sf::Vector2f{velocity.x * -1.f * collisionDamping, velocity.y};
         }
         // if ball hits right side
         if (posCurrent.x > bounds.x - radius) {
             posCurrent = sf::Vector2f{bounds.x - radius, posCurrent.y};
             posPrevious = posCurrent;
-             return sf::Vector2f{velocity.x * -1.f, velocity.y};
+             return sf::Vector2f{velocity.x * -1.f * collisionDamping, velocity.y};
         }
         // if ball hits top side
         if (posCurrent.y < radius) {
             posCurrent = sf::Vector2f{posCurrent.x, radius};
             posPrevious = posCurrent;
-            return sf::Vector2f{velocity.x, velocity.y * -1.f};
+            return sf::Vector2f{velocity.x, velocity.y * -1.f * collisionDamping};
         }
         // if ball hits bottom side
         if (posCurrent.y > bounds.y - radius) {
             posCurrent = sf::Vector2f{posCurrent.x, bounds.y - radius};
             posPrevious = posCurrent;
-            return sf::Vector2f{velocity.x, velocity.y * -1.f};
+            return sf::Vector2f{velocity.x, velocity.y * -1.f * collisionDamping};
         }
         return velocity;
     }
